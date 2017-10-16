@@ -16,7 +16,7 @@ defmodule Rumbl.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:name, :username, :password])
-    |> validate_required([:name, :username, :password])
+    |> cast(attrs, [:name, :username, :password_hash])
+    |> validate_required([:name, :username, :password_hash])
   end
 end
