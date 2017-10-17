@@ -8,8 +8,8 @@
   </li>
 
   <li>
-    <strong>Email:</strong>
-    <%= @user.email %>
+    <strong>Username:</strong>
+    <%= @user.username %>
   </li>
 
   <li>
