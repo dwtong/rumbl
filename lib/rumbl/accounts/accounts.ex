@@ -37,6 +37,8 @@ defmodule Rumbl.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  def get_user_by(value), do: Repo.get_by(User, value)
+
   @doc """
   Creates a user.
 
