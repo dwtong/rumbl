@@ -16,7 +16,21 @@ defmodule Rumbl.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
-    |> cast(attrs, [:name, :username, :password_hash])
-    |> validate_required([:name, :username, :password_hash])
+    |> cast(attrs, [:name, :username])
+    |> validate_length(:username, min: 1, max: 20)
   end
+
+  def registration_changeset(model, params) do
+    model
+    |> changeset(params)
+    |> cast(params, ~w(password), [])
+    |> validate_length(:password, min: 6, max: 100)
+    |> put_pass_hash()
+  end
+
+  defp put_pass_hash(%Ecto.Changeset{valid?: true,
+    changes: %{password: password}} = changeset) do
+      change(changeset, :password_hash, Comeonin.Bcrypt.add_hash(password))
+  end
+  defp put_pass_hash(changeset), do: changeset
 end
