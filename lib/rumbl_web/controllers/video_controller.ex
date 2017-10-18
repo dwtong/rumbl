@@ -5,13 +5,15 @@ defmodule RumblWeb.VideoController do
   alias Rumbl.Categories.Video
 
   def index(conn, _params) do
-    videos = Categories.list_videos()
+    # Move current user assignment to somewhere global?
+    current_user = conn.assigns.current_user
+    videos = Categories.list_videos_for_user(current_user)
     render(conn, "index.html", videos: videos)
   end
 
   def new(conn, _params) do
     current_user = conn.assigns.current_user
-    changeset = Categories.change_video_for_user(current_user)
+    changeset = Categories.new_video_for_user(current_user)
     render(conn, "new.html", changeset: changeset)
   end
 
@@ -29,20 +31,23 @@ defmodule RumblWeb.VideoController do
   end
 
   def show(conn, %{"id" => id}) do
-    video = Categories.get_video!(id)
+    current_user = conn.assigns.current_user
+    video = Categories.get_video_for_user!(id, current_user)
     render(conn, "show.html", video: video)
   end
 
   def edit(conn, %{"id" => id}) do
-    video = Categories.get_video!(id)
-    changeset = Categories.change_video(video)
+    current_user = conn.assigns.current_user
+    video = Categories.get_video_for_user!(id, current_user)
+    changeset = Categories.change_video_for_user(video, current_user)
     render(conn, "edit.html", video: video, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "video" => video_params}) do
-    video = Categories.get_video!(id)
+    current_user = conn.assigns.current_user
+    video = Categories.get_video_for_user!(id, current_user)
 
-    case Categories.update_video(video, video_params) do
+    case Categories.update_video_for_user(video, video_params, current_user) do
       {:ok, video} ->
         conn
         |> put_flash(:info, "Video updated successfully.")
@@ -53,9 +58,9 @@ defmodule RumblWeb.VideoController do
   end
 
   def delete(conn, %{"id" => id}) do
-    user = conn.assigns.current_user
-    video = Categories.get_video!(id)
-    {:ok, _video} = Categories.delete_video_for_user(video, user)
+    current_user = conn.assigns.current_user
+    video = Categories.get_video_for_user!(id, current_user)
+    {:ok, _video} = Categories.delete_video_for_user(video, current_user)
 
     conn
     |> put_flash(:info, "Video deleted successfully.")

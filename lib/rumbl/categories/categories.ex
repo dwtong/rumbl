@@ -8,47 +8,18 @@ defmodule Rumbl.Categories do
 
   alias Rumbl.Categories.Video
 
-  @doc """
-  Returns the list of videos.
-
-  ## Examples
-
-      iex> list_videos()
-      [%Video{}, ...]
-
-  """
-  def list_videos do
-    Repo.all(Video)
+  def list_videos_for_user(user) do
+    user
+    |> user_videos()
+    |> Repo.all
   end
 
-  @doc """
-  Gets a single video.
+  def get_video_for_user!(id, user) do
+    user
+    |> user_videos()
+    |> Repo.get!(id)
+  end
 
-  Raises `Ecto.NoResultsError` if the Video does not exist.
-
-  ## Examples
-
-      iex> get_video!(123)
-      %Video{}
-
-      iex> get_video!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_video!(id), do: Repo.get!(Video, id)
-
-  @doc """
-  Creates a video.
-
-  ## Examples
-
-      iex> create_video(%{field: value})
-      {:ok, %Video{}}
-
-      iex> create_video(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_video_for_user(attrs \\ %{}, user) do
     user
     |> Ecto.build_assoc(:videos)
@@ -56,36 +27,12 @@ defmodule Rumbl.Categories do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a video.
-
-  ## Examples
-
-      iex> update_video(video, %{field: new_value})
-      {:ok, %Video{}}
-
-      iex> update_video(video, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_video(%Video{} = video, attrs) do
+  def update_video_for_user(%Video{} = video, attrs, user) do
     video
     |> Video.changeset(attrs)
     |> Repo.update()
   end
 
-  @doc """
-  Deletes a Video.
-
-  ## Examples
-
-      iex> delete_video(video)
-      {:ok, %Video{}}
-
-      iex> delete_video(video)
-      {:error, %Ecto.Changeset{}}
-
-  """
   def delete_video_for_user(%Video{} = video, user) do
     user
     |> user_videos()
@@ -93,7 +40,14 @@ defmodule Rumbl.Categories do
     |> Repo.delete()
   end
 
-  def change_video_for_user(user) do
+  def change_video_for_user(%Video{} = video, user) do
+    user
+    |> user_videos()
+    |> Repo.get(video.id)
+    |> Video.changeset(%{})
+  end
+
+  def new_video_for_user(user) do
     user
     |> Ecto.build_assoc(:videos)
     |> Video.changeset(%{})
