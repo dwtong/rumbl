@@ -49,8 +49,9 @@ defmodule Rumbl.Categories do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_video(attrs \\ %{}) do
-    %Video{}
+  def create_video_for_user(attrs \\ %{}, user) do
+    user
+    |> Ecto.build_assoc(:videos)
     |> Video.changeset(attrs)
     |> Repo.insert()
   end
@@ -85,20 +86,20 @@ defmodule Rumbl.Categories do
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_video(%Video{} = video) do
-    Repo.delete(video)
+  def delete_video_for_user(%Video{} = video, user) do
+    user
+    |> user_videos()
+    |> Repo.get(video.id)
+    |> Repo.delete()
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking video changes.
+  def change_video_for_user(user) do
+    user
+    |> Ecto.build_assoc(:videos)
+    |> Video.changeset(%{})
+  end
 
-  ## Examples
-
-      iex> change_video(video)
-      %Ecto.Changeset{source: %Video{}}
-
-  """
-  def change_video(%Video{} = video) do
-    Video.changeset(video, %{})
+  defp user_videos(user) do
+    Ecto.assoc(user, :videos)
   end
 end

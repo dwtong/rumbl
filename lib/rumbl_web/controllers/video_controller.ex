@@ -10,12 +10,15 @@ defmodule RumblWeb.VideoController do
   end
 
   def new(conn, _params) do
-    changeset = Categories.change_video(%Video{})
+    current_user = conn.assigns.current_user
+    changeset = Categories.change_video_for_user(current_user)
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"video" => video_params}) do
-    case Categories.create_video(video_params) do
+    user = conn.assigns.current_user
+
+    case Categories.create_video_for_user(video_params, user) do
       {:ok, video} ->
         conn
         |> put_flash(:info, "Video created successfully.")
@@ -50,8 +53,9 @@ defmodule RumblWeb.VideoController do
   end
 
   def delete(conn, %{"id" => id}) do
+    user = conn.assigns.current_user
     video = Categories.get_video!(id)
-    {:ok, _video} = Categories.delete_video(video)
+    {:ok, _video} = Categories.delete_video_for_user(video, user)
 
     conn
     |> put_flash(:info, "Video deleted successfully.")
