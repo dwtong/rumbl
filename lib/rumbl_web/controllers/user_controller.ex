@@ -4,7 +4,7 @@ defmodule RumblWeb.UserController do
   alias Rumbl.Accounts
   alias Rumbl.Accounts.User
 
-  plug :authenticate when action in [:index, :show]
+  plug :authenticate_user when action in [:index, :show]
 
   def index(conn, _params) do
     users = Accounts.list_users()
@@ -59,16 +59,5 @@ defmodule RumblWeb.UserController do
     conn
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: user_path(conn, :index))
-  end
-
-  defp authenticate(conn, _opts) do
-    if conn.assigns.current_user do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must be signed in to access that page.")
-      |> redirect(to: page_path(conn, :index))
-      |> halt()
-    end
   end
 end
