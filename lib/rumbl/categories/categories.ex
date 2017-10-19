@@ -7,6 +7,7 @@ defmodule Rumbl.Categories do
   alias Rumbl.Repo
 
   alias Rumbl.Categories.Video
+  alias Rumbl.Categories.Query
 
   def list_videos_for_user(user) do
     user
@@ -68,8 +69,11 @@ defmodule Rumbl.Categories do
       [%Topic{}, ...]
 
   """
-  def list_topics do
-    Repo.all(Topic)
+  def list_topics_by_name_and_id do
+    Topic
+    |> Query.order_by_alphabetical
+    |> Query.select_by_name_and_id
+    |> Repo.all()
   end
 
   @doc """

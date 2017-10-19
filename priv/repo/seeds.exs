@@ -9,3 +9,9 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+alias Rumbl.Repo
+alias Rumbl.Categories.Topic
+
+for topic <- ~w(Action Drama Romance SciFi Comedy) do
+  Repo.insert!(%Topic{ name: topic })
+end
