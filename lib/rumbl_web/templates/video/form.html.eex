@@ -4,7 +4,10 @@
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
-
+  <div class="form-group">
+    <%= label f, :topic_id, "Topic", class: "control-label" %>
+    <%= select f, :topic_id, @topics, class: "form-control", prompt: "Choose a topic" %>
+  </div>
   <div class="form-group">
     <%= label f, :url, class: "control-label" %>
     <%= text_input f, :url, class: "form-control" %>

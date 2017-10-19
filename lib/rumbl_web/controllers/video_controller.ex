@@ -4,6 +4,8 @@ defmodule RumblWeb.VideoController do
   alias Rumbl.Categories
   alias Rumbl.Categories.Video
 
+  plug :load_topics when action in [:new, :create, :edit, :update]
+
   def index(conn, _params) do
     # Move current user assignment to somewhere global?
     current_user = conn.assigns.current_user
@@ -65,5 +67,10 @@ defmodule RumblWeb.VideoController do
     conn
     |> put_flash(:info, "Video deleted successfully.")
     |> redirect(to: video_path(conn, :index))
+  end
+
+  def load_topics(conn, _) do
+    topics = Categories.list_topics_by_name_and_id
+    assign(conn, :topics, topics)
   end
 end
