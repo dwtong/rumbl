@@ -8,9 +8,10 @@ defmodule Rumbl.Categories.Video do
     field :description, :string
     field :title, :string
     field :url, :string
-    field :user_id, :id
-
     timestamps()
+
+    belongs_to :user, Rumbl.Accounts.User
+    belongs_to :topic, Rumbl.Categories.Topic
   end
 
   @doc false

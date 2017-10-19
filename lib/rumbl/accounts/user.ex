@@ -9,7 +9,8 @@ defmodule Rumbl.Accounts.User do
     field :username, :string
     field :password, :string, virtual: true
     field :password_hash, :string
-    has_many :videos, Rumbl.Categories.Video # Is this the correct way to do this in Phoenix 1.3?
+
+    has_many :videos, Rumbl.Categories.Video
 
     timestamps()
   end
